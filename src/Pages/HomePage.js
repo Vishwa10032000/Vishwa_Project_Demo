@@ -19,6 +19,8 @@ import TopProductImage2 from '../Images/urban-street-style-blonde-details-everyd
 import TopProductImage3 from '../Images/smooth-textured-handkerchief-hanging.png';
 import Seller1 from '../Images/Seller1.png';
 import banner_three from '../Images/Frame 2event1 (1).png';
+import ReactPaginate from 'react-paginate';
+import ReactResponsivePagination from "react-responsive-pagination"
 
 import { ArrowForward, ArrowRight, FavoriteBorderOutlined, RemoveRedEye, SendOutlined, ShoppingCartOutlined } from '@mui/icons-material';
 import Marquee from 'react-fast-marquee';
@@ -139,6 +141,19 @@ function HomePage() {
     const [error, setError] = useState(null);
     const [currentSlide, setCurrentSlide] = useState(0);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const productsPerPage = 9;
+  
+    const indexOfLastProduct = (currentPage ) * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = data?.bestProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  
+    const totalPages = Math.ceil(data?.bestProducts.length / productsPerPage);
+  
+    const handlePageChange = (newPage) => {
+      setCurrentPage(newPage);
+    };
+
     const fetchData = async () => {
         try {
             setLoading(true);
@@ -150,6 +165,8 @@ function HomePage() {
             setLoading(false);
         }
     };
+
+
 
     useEffect(() => {
         fetchData();
@@ -200,6 +217,7 @@ function HomePage() {
             setCurrentSlide(newIndex);
         },
     };
+
 
     return (
         <div>
@@ -581,7 +599,7 @@ function HomePage() {
                             fontSize: "72px",
                             fontStyle: "normal",
                             fontWeight: "500",
-                            lineHeight: "76px", /* 105.556% */
+                            lineHeight: "76px",
                             letterSpacing: "-2px", position: 'absolute', top: '25%', left: "35%", right: '0%'
                         }}>Simply Unique/
                             Simply Better.</h1>
@@ -656,9 +674,9 @@ function HomePage() {
                                                         position: 'relative',
                                                         overflow: 'hidden',
                                                         position: 'absolute',
-                                                        bottom: '25%', /* Initial position set to bottom */
+                                                        bottom: '25%',
                                                         right: '23%',
-                                                        transition: 'bottom 0.3s ease-in-out' /* Transition for smooth animation */
+                                                        transition: 'bottom 0.3s ease-in-out'
                                                     }}>
                                                         <div className=' px-3 button-content'>Add to Cart</div>
                                                     </button>
@@ -718,7 +736,7 @@ function HomePage() {
                                         displayedCategories[categoryId] = true;
 
                                         const renderStars = (averageRating) => {
-                                            const starCount = Math.round(averageRating); // Round to the nearest whole number
+                                            const starCount = Math.round(averageRating);
                                             const stars = Array.from({ length: 5 }, (_, index) => (
                                                 <svg key={index} xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill={index < starCount ? "#F9B741" : "#ddd"}>
                                                     <path d="M8.03834 1.10997C8.20914 0.699319 8.79086 0.699318 8.96166 1.10996L10.4987 4.80556C10.5707 4.97868 10.7336 5.09696 10.9204 5.11194L14.9102 5.4318C15.3535 5.46734 15.5332 6.02059 15.1955 6.30993L12.1557 8.91378C12.0133 9.03576 11.9512 9.22715 11.9947 9.40952L12.9234 13.3028C13.0265 13.7354 12.5559 14.0773 12.1764 13.8455L8.76063 11.7592C8.60062 11.6615 8.39938 11.6615 8.23937 11.7592L4.82363 13.8455C4.44408 14.0773 3.97345 13.7354 4.07665 13.3028L5.00534 9.40952C5.04884 9.22715 4.98665 9.03576 4.84426 8.91378L1.80453 6.30993C1.46676 6.02059 1.64652 5.46734 2.08985 5.4318L6.07955 5.11194C6.26645 5.09696 6.42925 4.97868 6.50126 4.80556L8.03834 1.10997Z" />
@@ -740,9 +758,9 @@ function HomePage() {
                                                         position: 'relative',
                                                         overflow: 'hidden',
                                                         position: 'absolute',
-                                                        bottom: '25%', /* Initial position set to bottom */
+                                                        bottom: '25%',
                                                         right: '23%',
-                                                        transition: 'bottom 0.3s ease-in-out' /* Transition for smooth animation */
+                                                        transition: 'bottom 0.3s ease-in-out'
                                                     }}>
                                                         <div className=' px-3 button-content'>Add to Cart</div>
                                                     </button>
@@ -752,7 +770,6 @@ function HomePage() {
                                                         <h6>${product.price}</h6>
                                                     </div>
                                                 </div>
-                                                {/* Add other product information as needed */}
                                             </div>
                                         );
                                     }
@@ -791,7 +808,7 @@ function HomePage() {
                             </div>
                         </div>
                         <div className='row mb-4 d-flex justify-content-between'>
-                            {data.bestProducts.slice(0, 12).map((product) => (
+                            {currentProducts.map((product) => (
                                 <div className='col-md-4 col-6' key={product.id}>
                                     <div className='row bestProductBorder p-3 rounded' style={{ backgroundColor: "#FFF9F3", margin: "3px" }}>
                                         <div className='col-md-6'>
@@ -802,9 +819,19 @@ function HomePage() {
                                             <span style={{ fontSize: "14px", color: "#EB6D20" }}><b>${product.price}</b></span>
                                         </div>
                                     </div>
-                                    {/* Add other product information as needed */}
                                 </div>
                             ))}
+                        </div>
+                        <div className="d-flex align-items-center justify-content-center" >
+                            <ReactResponsivePagination
+                                current={currentPage}
+                                total={totalPages}
+                                onPageChange={handlePageChange}
+                                previousLabel="Previous"
+                                nextLabel="Next"
+                                containerClassName="pagination-container"
+                                activeClassName="active"
+                            />
                         </div>
 
                     </>) :
